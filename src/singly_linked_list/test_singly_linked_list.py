@@ -49,6 +49,14 @@ class LinkedListTests(unittest.TestCase):
         self.assertIsNone(self.list.tail)
         self.assertIsNone(self.list.remove_tail())
 
+        long_sll = LinkedList()
+        long_sll.add_to_tail(1)
+        long_sll.add_to_tail(2)
+        long_sll.add_to_tail(3)
+        long_sll.add_to_tail(4)
+        long_sll.add_to_tail(5)
+        self.assertEqual(long_sll.remove_tail(), 5)
+
 
 if __name__ == '__main__':
     unittest.main()

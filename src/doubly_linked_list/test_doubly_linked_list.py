@@ -11,6 +11,21 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(self.dll.tail.value, 1)
         self.assertEqual(self.dll.size, 1)
 
+    def test_empty_list_construction(self):
+        new_dll = DoublyLinkedList([])
+        self.assertIsNone(new_dll.head)
+        self.assertIsNone(new_dll.tail)
+        self.assertEqual(len(new_dll), 0)
+
+    def test_repr(self):
+        empty_dll = DoublyLinkedList()
+        self.assertEqual(empty_dll.__repr__(), "DLL=[]")
+        one_el_dll = DoublyLinkedList([1])
+        self.assertEqual(one_el_dll.__repr__(), "DLL=[Node(1)]")
+        long_dll = DoublyLinkedList([1, 2, 3, 4, 5, 6, 7])
+        long_repr = "DLL=[Node(1) -> Node(2) -> Node(3) -> Node(4) -> Node(5) -> Node(6) -> Node(7)]"
+        self.assertEqual(long_dll.__repr__(), long_repr)
+
     def test_default_construction(self):
         new_dll = DoublyLinkedList()
         self.assertIsNone(new_dll.head)
@@ -22,9 +37,16 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(new_dll.head.value, 1)
         self.assertEqual(new_dll.tail.value, 6)
         self.assertEqual(new_dll.size, 6)
-        print(new_dll)
 
     def test_list_remove_from_tail(self):
+        # test when list is empty
+        empty_dll = DoublyLinkedList()
+        self.assertIsNone(empty_dll.remove_tail())
+
+        long_dll = DoublyLinkedList([1, 2, 3, 4])
+        self.assertEqual(long_dll.remove_tail(), 4)
+        self.assertEqual(len(long_dll), 3)
+
         self.dll.remove_tail()
         self.assertIsNone(self.dll.head)
         self.assertIsNone(self.dll.tail)
@@ -43,6 +65,12 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(len(self.dll), 0)
 
     def test_list_remove_from_head(self):
+        empty_dll = DoublyLinkedList()
+        self.assertIsNone(empty_dll.remove_head())
+
+        new_dll = DoublyLinkedList([1, 2, 3, 4])
+        self.assertEqual(new_dll.remove_head(), 1)
+
         self.dll.remove_head()
         self.assertIsNone(self.dll.head)
         self.assertIsNone(self.dll.tail)
@@ -87,6 +115,7 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(self.dll.tail.value, 1)
         self.assertEqual(self.dll.head.value, 40)
 
+        self.assertIsNone(self.dll.move_to_end(None))
         self.dll.move_to_end(self.dll.head)
         self.assertEqual(self.dll.tail.value, 40)
         self.assertEqual(self.dll.tail.prev.value, 1)
@@ -97,8 +126,30 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(self.dll.tail.value, 40)
         self.assertEqual(self.dll.tail.prev.value, 4)
         self.assertEqual(len(self.dll), 3)
+        # test when node is tail
+        self.assertIsNone(self.dll.move_to_end(self.dll.tail))
+        # test when list is empty
+        new_node = Node(10)
+        new_dll = DoublyLinkedList()
+        self.assertIsNone(new_dll.move_to_end(new_node))
+        # test when node is not in list
+        self.assertIsNone(self.dll.move_to_end(new_node))
 
     def test_list_move_to_front(self):
+        unattached_node = Node(5)
+        # test when list is empty
+        empty_dll = DoublyLinkedList()
+        self.assertIsNone(empty_dll.move_to_front(unattached_node))
+
+        # test when Node is not in list
+        long_dll = DoublyLinkedList([1, 2, 3, 4, 5, 6])
+        # test when node is None
+        self.assertIsNone(long_dll.move_to_front(None))
+        # test when node is not in list
+        self.assertIsNone(long_dll.move_to_front(unattached_node))
+        # test when given node is head of list
+        self.assertIsNone(long_dll.move_to_front(long_dll.head))
+
         self.dll.add_to_tail(3)
         self.assertEqual(self.dll.head.value, 1)
         self.assertEqual(self.dll.tail.value, 3)
@@ -115,7 +166,21 @@ class DoublyLinkedListTests(unittest.TestCase):
         self.assertEqual(len(self.dll), 3)
 
     def test_list_delete(self):
-        self.dll.delete(self.dll.head)
+        # test delete when list is empty
+        unattached_node = Node(5)
+        empty_dll = DoublyLinkedList()
+        self.assertIsNone(empty_dll.delete(unattached_node))
+
+        long_dll = DoublyLinkedList([1, 2, 3, 4, 5, 6, 7])
+        self.assertIsNone(long_dll.delete(unattached_node))
+        # test delete where node is none
+        self.assertIsNone(long_dll.delete(None))
+        self.assertEqual(long_dll.delete(long_dll.tail), 7)
+        self.assertEqual(long_dll.tail.value, 6)
+        self.assertEqual(len(long_dll), 6)
+
+        self.assertEqual(len(self.dll), 1)
+        val_returned = self.dll.delete(self.dll.head)
         self.assertIsNone(self.dll.head)
         self.assertIsNone(self.dll.tail)
         self.assertEqual(len(self.dll), 0)
